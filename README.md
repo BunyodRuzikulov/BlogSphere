@@ -79,9 +79,5 @@ Commit your changes (git commit -m 'Add your feature').
 Push to the branch (git push origin feature/your-feature).
 Open a Pull Request.
 
-License 📜
-This project is licensed under the MIT License - see the LICENSE file for details.
-Contact 📬
-Have questions or suggestions? Reach out via email or open an issue on GitHub.
 
 Built with ❤️ by Bunyod  
