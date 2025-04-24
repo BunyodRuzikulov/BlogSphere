@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Blog{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Navigatsiya -->
+    <nav class="bg-gradient-to-r from-blue-600 to-blue-500 text-white p-4 sticky top-0 z-50 shadow-lg">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <a href="{% url 'home' %}" class="text-3xl font-bold hover:text-blue-200 transition duration-300 transform hover:scale-105">
+                <span class="text-gradient">Blog</span>
+            </a>
+            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 mt-4 md:mt-0">
+                <a href="{% url 'home' %}" class="hover:text-blue-200 transition duration-300 hover:underline hover:underline-offset-4">Bosh Sahifa</a>
+                {% for category in categories %}
+                    <a href="{% url 'category' category.slug %}" class="hover:text-blue-200 transition duration-300 hover:underline hover:underline-offset-4">
+                        {{ category.name }}
+                    </a>
+                {% endfor %}
+                {% if user.is_authenticated %}
+                    <a href="{% url 'profile' user.username %}" class="hover:text-blue-200 transition duration-300 hover:underline hover:underline-offset-4">Profil</a>
+                    <a href="{% url 'logout' %}" class="hover:text-blue-200 transition duration-300 hover:underline hover:underline-offset-4">Chiqish</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="hover:text-blue-200 transition duration-300 hover:underline hover:underline-offset-4">Kirish</a>
+                    <a href="{% url 'signup' %}" class="hover:text-blue-200 transition duration-300 hover:underline hover:underline-offset-4">Ro'yxatdan o'tish</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Asosiy kontent -->
+    <main class="container mx-auto p-4 md:p-6 min-h-screen">
+        {% if messages %}
+            <div class="space-y-3 mb-6">
+                {% for message in messages %}
+                    <div class="message bg-green-500 text-white p-4 rounded-lg shadow-md animate__animated animate__fadeInRight">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-2xl font-bold mb-2 animate__animated animate__fadeIn">Blog Tizimi</h3>
+                    <p class="text-gray-300">&copy; 2025 Barcha huquqlar himoyalangan.</p>
+                </div>
+                <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-8 text-center md:text-left">
+                    <div class="animate__animated animate__fadeIn animate__delay-1s">
+                        <h4 class="font-semibold mb-2">Sahifalar</h4>
+                        <ul class="space-y-1">
+                            <li><a href="{% url 'about' %}" class="hover:text-blue-300 transition">Haqida</a></li>
+                            <li><a href="{% url 'contact' %}" class="hover:text-blue-300 transition">Aloqa</a></li>
+                            <li><a href="{% url 'archive' %}" class="hover:text-blue-300 transition">Arxiv</a></li>
+                        </ul>
+                    </div>
+                    <div class="animate__animated animate__fadeIn animate__delay-2s">
+                        <h4 class="font-semibold mb-2">Ijtimoiy tarmoqlar</h4>
+                        <div class="flex space-x-4 justify-center md:justify-start">
+                            <a href="#" class="text-2xl hover:text-blue-300 transition">📱</a>
+                            <a href="#" class="text-2xl hover:text-blue-300 transition">📘</a>
+                            <a href="#" class="text-2xl hover:text-blue-300 transition">📸</a>
+                            <a href="#" class="text-2xl hover:text-blue-300 transition">🐦</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>"()"</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/scripts.js' %}"></script>
+    <script>
+        // Simple animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedElements = document.querySelectorAll('.animate-on-scroll');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            animatedElements.forEach(el => observer.observe(el));
+        });
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}404 - Sahifa Topilmadi{% endblock %}
+{% block content %}
+    <div class="text-center py-12">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">404 - Sahifa Topilmadi</h1>
+        <p class="text-gray-600 mb-6">Kechirasiz, siz qidirgan sahifa mavjud emas.</p>
+        <a href="{% url 'home' %}" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Bosh Sahifaga Qaytish</a>
+    </div>
+{% endblock %}

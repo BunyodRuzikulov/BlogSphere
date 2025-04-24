@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block extra_head %}
+    <meta name="description" content="{{ post.content|truncatewords:30 }}">
+    <meta name="keywords" content="{{ post.tags }}">
+{% endblock %}
+{% block content %}
+    <div class="bg-white p-6 rounded shadow">
+        <h1 class="text-3xl font-bold mb-4">{{ post.title }}</h1>
+        {% if post.image %}
+            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="w-full h-64 object-cover mb-4 rounded">
+        {% endif %}
+        <p class="text-gray-600 mb-4">{{ post.content }}</p>
+        <p class="text-sm text-gray-500">Muallif: {{ post.author }} | {{ post.created_at }} | Ko‘rishlar: {{ post.views }}</p>
+
+        <!-- Like tugmasi -->
+        <div class="flex items-center mb-4">
+            {% if user.is_authenticated %}
+                <form action="{% url 'like_post' post.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        {% if user in post.likes.all %}Unlike{% else %}Like{% endif %} ({{ post.likes.count }})
+                    </button>
+                </form>
+            {% else %}
+                <p><a href="{% url 'login' %}" class="text-blue-600 hover:underline">Like qilish uchun kiring</a></p>
+            {% endif %}
+        </div>
+
+        <!-- Ijtimoiy tarmoqlarda ulashish -->
+        <div class="flex space-x-4 mb-4">
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" class="text-blue-600 hover:underline">Facebook</a>
+            <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.title }}" class="text-blue-600 hover:underline">Twitter</a>
+            <a href="https://www.linkedin.com/shareArticle?url={{ request.build_absolute_uri }}" class="text-blue-600 hover:underline">LinkedIn</a>
+        </div>
+
+        <!-- Kommentlar -->
+        <h2 class="text-2xl font-bold mb-4">Kommentlar</h2>
+        {% for comment in comments %}
+            <div class="bg-gray-50 p-4 rounded shadow mb-4">
+                <p>{{ comment.content }}</p>
+                <p class="text-sm text-gray-500">Muallif: {{ comment.author }} | {{ comment.created_at }}</p>
+                {% for reply in comment.replies.all %}
+                    <div class="ml-6 bg-white p-3 rounded mt-2">
+                        <p>{{ reply.content }}</p>
+                        <p class="text-sm text-gray-500">Muallif: {{ reply.author }} | {{ reply.created_at }}</p>
+                    </div>
+                {% endfor %}
+                {% if user.is_authenticated %}
+                    <form action="{% url 'post_detail' post.slug %}" method="POST" class="mt-2">
+                        {% csrf_token %}
+                        <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                        {{ comment_form }}
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded mt-2 hover:bg-blue-700">Javob berish</button>
+                    </form>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p class="text-gray-600">Hozircha kommentlar yo‘q.</p>
+        {% endfor %}
+
+        <!-- Yangi komment -->
+        {% if user.is_authenticated %}
+            <h2 class="text-2xl font-bold mb-4">Yangi Komment</h2>
+            <form action="{% url 'post_detail' post.slug %}" method="POST">
+                {% csrf_token %}
+                {{ comment_form }}
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded mt-2 hover:bg-blue-700">Yuborish</button>
+            </form>
+        {% else %}
+            <p><a href="{% url 'login' %}" class="text-blue-600 hover:underline">Komment yozish uchun kiring</a></p>
+        {% endif %}
+
+        <!-- O‘xshash postlar -->
+        {% if related_posts %}
+            <h2 class="text-2xl font-bold mt-8 mb-4">O‘xshash Postlar</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for related_post in related_posts %}
+                    <div class="bg-white p-4 rounded shadow">
+                        <h3 class="text-lg font-bold"><a href="{% url 'post_detail' related_post.slug %}" class="hover:text-blue-600">{{ related_post.title }}</a></h3>
+                        <p class="text-gray-600">{{ related_post.content|truncatewords:20 }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

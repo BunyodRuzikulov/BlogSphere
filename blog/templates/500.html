@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}500 - Server Xatosi{% endblock %}
+{% block content %}
+    <div class="text-center py-12">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">500 - Server Xatosi</h1>
+        <p class="text-gray-600 mb-6">Kechirasiz, serverda xatolik yuz berdi. Iltimos, keyinroq urinib ko‘ring.</p>
+        <a href="{% url 'home' %}" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Bosh Sahifaga Qaytish</a>
+    </div>
+{% endblock %}
